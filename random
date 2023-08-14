@@ -1,0 +1,31 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract MeuToken {
+    string public nome = "Meu Token";
+    string public simbolo = "MTK";
+    uint8 public casasDecimais = 18;
+    uint256 public ofertaTotal;
+    mapping(address => uint256) public saldos;
+
+    event Transferencia(address remetente, address destinatario, uint256 valor);
+
+    constructor(uint256 _ofertaInicial) {
+        ofertaTotal = _ofertaInicial * 10 ** uint256(casasDecimais);
+        saldos[msg.sender] = ofertaTotal;
+    }
+
+    function transferir(address destinatario, uint256 valor) external retorna (bool sucesso) {
+        require(destinatario != address(0), "Endereço inválido");
+        require(saldos[msg.sender] >= valor, "Saldo insuficiente");
+
+        saldos[msg.sender] -= valor;
+        saldos[destinatario] += valor;
+        emit Transferencia(msg.sender, destinatario, valor);
+        return true;
+    }
+
+    function saldoAtual(address conta) external view retorna (uint256) {
+        return saldos[conta];
+    }
+}
